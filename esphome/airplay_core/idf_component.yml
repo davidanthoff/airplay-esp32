@@ -1,0 +1,17 @@
+description: AirPlay 2 receiver core (airplay-esp32 protocol stack) for the ESPHome airplay media source
+version: "0.0.1"
+dependencies:
+  idf: ">=5.5"
+  # Same constraints as main/idf_component.yml.
+  # ESPHome's mdns component pins an exact espressif/mdns (1.14.0 in
+  # 2026.10.1) inside this range, so both resolve to one copy.
+  espressif/mdns: "^1.11.1"
+  # libsodium is deliberately NOT listed here. main/ uses espressif/libsodium,
+  # but with `api: encryption:` ESPHome's noise component brings its own port
+  # (esphome/libsodium, also libsodium 1.0.21), and ESP-IDF refuses to build
+  # with both ("Requirement espressif__libsodium and requirement libsodium are
+  # both added"). components/airplay/media_source.py always adds ESPHome's
+  # copy, and CMakeLists.txt requires it as `libsodium`.
+  # ALAC + AAC decoders. Binary-only, licensed for use with Espressif chips
+  # only. The firmware's LICENSE-EXCEPTION permits linking it.
+  espressif/esp_audio_codec: "^2.5.0"

@@ -37,3 +37,6 @@ components/dac_tas58xx/TAS58xx Tuning Guide.pdf
 # with components/display/make_background.py; the driver renders a blank
 # background without it. See docs/features/tft-display.md.
 data/bg/
+
+# Python bytecode (e.g. from building the ESPHome component in esphome/)
+__pycache__/

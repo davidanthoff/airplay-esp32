@@ -236,6 +236,17 @@ scripts/lint.sh --fix      # Attempt to auto-fix clang-tidy issues
 
 **Host tests**: `tests/pcm51xx/run.py`, `tests/tas5805m_rate/run.py`, `tests/ptp_clock/run.py`, `tests/audio_eq/run.py`, `tests/rtp_resend/run.py`, `tests/bplist/run.py`, `tests/husb238a/run.py`, `tests/audio_scheduler/run.py` and `tests/tas58xx_peak/run.py` compile the real driver, TAS5805M filter-rate, PTP filter, EQ, resend-tracker, binary-plist, USB-PD trigger, scheduler and filter-peak code with the host C compiler, using small mocks where needed, and run in CI's `format-check` job. The TAS5805M suite also uses Node.js to check the actual EQ page and driver/UI round trips. There is no test framework beyond that; everything else needs testing on hardware.
 
+## ESPHome component
+
+`esphome/` packages the AirPlay stack as an ESPHome external component (`media_source: - platform: airplay`); users point `external_components` at this repo with `path: esphome/components`. `esphome/README.md` has the design. Rules:
+
+- **`main/` stays ESPHome-agnostic.** `esphome/airplay_core/CMakeLists.txt` compiles a list of `main/` sources directly and replaces `main.c`, `network/mdns_airplay.c` and the `audio_output*.c` backends with `esphome/airplay_core/src/`. When a `main/` change adds a source file the compiled set needs, a symbol a replaced file used to provide, or a new weak default in `audio_output_common.c` that calls into code not compiled there (LEDs, display, web), the ESPHome build breaks at link time.
+- Keep `src/airplay_core.c` in step with `start_airplay_services()` in `main/main.c`, `src/mdns_airplay_esphome.c` with `network/mdns_airplay.c`, and `MAIN_PIPELINE_LATENCY_US` in `src/audio_output_esphome.c` with `OUTPUT_PIPELINE_LATENCY_US`.
+- ESPHome copies only the top-level files of `esphome/components/airplay/`; don't add subdirectories there.
+- `set_state_()` only on ESPHome's main loop; core callbacks arrive on FreeRTOS tasks and go through `pending_events_`.
+- ESPHome builds with `CONFIG_SPIRAM_USE_CAPS_ALLOC`: plain `malloc` never returns PSRAM there.
+- Build check: `esphome compile <yaml>` with ESPHome ≥ 2026.10 and the component pulled in with `type: local, path: <repo>/esphome/components`.
+
 ## Documentation site
 
 The site is built with **Zensical**, not mkdocs — it reads `mkdocs.yml` natively, and mkdocs is not installed.

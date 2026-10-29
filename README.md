@@ -65,6 +65,7 @@ pio run -e esp32s3 -t uploadfs   # required — writes the web UI to SPIFFS
 - **48 kHz output** — optional 44.1 → 48 kHz conversion via a sinc resampler
 - **Displays** — optional OLED or 320×170 colour TFT with track metadata
 - **Hardware buttons** — optional play/pause, volume and track skip
+- **ESPHome** — an `airplay` media source for ESPHome speakers ([esphome/README.md](esphome/README.md))
 
 Audio only, one speaker per board, and a decent WiFi signal is required.
 

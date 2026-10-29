@@ -1,0 +1,16 @@
+# Subset of main/Kconfig.projbuild that the sources compiled for ESPHome read.
+# ESPHome sets these from YAML via esp32.add_idf_sdkconfig_option() in
+# components/airplay/media_source.py. Keep the names identical to
+# main/Kconfig.projbuild so main/ picks them up. AirPlay 1 vs 2 is a runtime
+# setting (settings_airplay_v1()), see airplay_core.c.
+
+menu "AirPlay core (ESPHome)"
+
+    config ENABLE_AIRPLAY_ARTWORK
+        bool "Receive cover art"
+        default n
+        help
+            Advertise artwork support in mDNS and accept cover art. Off by
+            default: large images on the RTSP connection can cause drop-outs.
+
+endmenu
